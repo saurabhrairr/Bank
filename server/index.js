@@ -7,14 +7,14 @@ const jwt = require('jsonwebtoken');
 const app= express();
 const cors=require('cors');
 
-
+require("dotenv").config();
 app.use(cors());
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-mongoose.connect('mongodb://localhost:27017/bankdatasave', {
+mongoose.connect(process.env.DB_CONNECTION, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -98,6 +98,8 @@ app.post('/login/customer', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 
 
 app.post('/login/banker', async (req, res) => {
