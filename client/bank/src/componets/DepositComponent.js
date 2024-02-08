@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const DepositComponent = () => {
   const [amount, setAmount] = useState('');
 
   const handleDeposit = async () => {
     try {
-      await axios.post('http://localhost:8000/deposit', { amount });
+      await axios.post('https://bankserver11.onrender.com/deposit', { amount });
       console.log('Deposit successful');
+      Swal.fire('Success', 'Deposit successful', 'success');
     } catch (error) {
       console.error('Error depositing:', error);
+      Swal.fire('Error', 'Failed to deposit', 'error');
     }
   };
 

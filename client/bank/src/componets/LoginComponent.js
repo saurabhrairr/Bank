@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import "./login.css"
+import Swal from 'sweetalert2';
+import "./login.css";
 
 const LoginComponent = () => {
   const [email, setEmail] = useState('');
@@ -9,13 +10,14 @@ const LoginComponent = () => {
   const [userType, setUserType] = useState('customer'); 
   
   const navigate = useNavigate();
+
   const handleLogin = async () => {
     try {
       let loginEndpoint;
       if (userType === 'customer') {
-        loginEndpoint = 'http://localhost:8000/login/customer';
+        loginEndpoint = 'https://bankserver11.onrender.com/login/customer';
       } else if (userType === 'banker') {
-        loginEndpoint = 'http://localhost:8000/login/banker';
+        loginEndpoint = 'https://bankserver11.onrender.com/login/banker';
       }
       const response = await axios.post(loginEndpoint, {
         email,
@@ -23,9 +25,11 @@ const LoginComponent = () => {
       });
       console.log('Login successful');
       console.log('Access Token:', response.data.accessToken);
-      navigate("/WithdrawComponent")
+      Swal.fire('Success', 'Login successful', 'success');
+      navigate("/WithdrawComponent");
     } catch (error) {
       console.error('Login failed:', error);
+      Swal.fire('Error', 'Login failed', 'error');
     }
   };
 
@@ -68,16 +72,11 @@ const LoginComponent = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <div className="input-field">
-        <input
-          type="text"
-          placeholder="text"
-          value={userType}
-          onChange={(e) => setUserType(e.target.value)}
-        />
-      </div>
       <div className="submit-button">
         <button onClick={handleLogin}>Login</button>
+      </div>
+      <div className="register-link">
+        <p>Don't have an account? <Link to="/RegisterComponent">Register here</Link></p>
       </div>
     </div>
   );
