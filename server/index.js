@@ -7,14 +7,13 @@ const jwt = require('jsonwebtoken');
 const app= express();
 const cors=require('cors');
 
-// Middleware
+
 app.use(cors());
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-// Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/bankdatasave', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -24,19 +23,19 @@ mongoose.connect('mongodb://localhost:27017/bankdatasave', {
 const crypto = require("crypto");
 
 const generateSecretKey = () => {
-       // Use any suitable method to generate a key, here we use crypto.randomBytes
+    
        return crypto.randomBytes(32).toString('hex');
      };
      
-     // Generate the secret key
+
      const secretKey = generateSecretKey();
 
-// Create Mongoose schemas
+
 const userSchema = new mongoose.Schema({
   username: String,
   email: String,
   password: String,
-  role: String, // 'customer' or 'banker'
+  role: String, 
 });
        
 
@@ -44,17 +43,17 @@ const accountSchema = new mongoose.Schema({
   userId: mongoose.Schema.Types.ObjectId,
   balance: Number,
   transactions: [{
-    type: String, // 'deposit' or 'withdrawal'
+    type: String, 
     amount: Number,
     timestamp: { type: Date, default: Date.now },
   }],
 });
 
-// Create Mongoose models
+
 const User = mongoose.model('User', userSchema);
 const Account = mongoose.model('Account', accountSchema);
 
-// Middleware
+
 app.use(bodyParser.json());
 
 app.post("/register", async (req, res) => {
@@ -78,7 +77,7 @@ app.post("/register", async (req, res) => {
          res.status(500).json({ error: "Internal Server Error" });
        }
      });
-// Customer login endpoint
+
 app.post('/login/customer', async (req, res) => {
   const { email, password } = req.body;
 
@@ -100,7 +99,7 @@ app.post('/login/customer', async (req, res) => {
   }
 });
 
-// Banker login endpoint
+
 app.post('/login/banker', async (req, res) => {
   const { email, password } = req.body;
 
@@ -122,7 +121,7 @@ app.post('/login/banker', async (req, res) => {
   }
 });
 
-// Middleware to verify access token
+
 const authenticateToken = (req, res, next) => {
        const token = req.header("Authorization");
      
@@ -138,7 +137,7 @@ const authenticateToken = (req, res, next) => {
        });
      };
 
-// Transactions endpoint for customers
+
 app.get('/transactions', authenticateToken, async (req, res) => {
   try {
     const account = await Account.findOne({ userId: req.userId });
@@ -152,7 +151,7 @@ app.get('/transactions', authenticateToken, async (req, res) => {
 
 
 
-// Deposit endpoint for customers
+
 app.post('/deposit', authenticateToken, async (req, res) => {
   const { amount } = req.body;
 
@@ -171,7 +170,7 @@ app.post('/deposit', authenticateToken, async (req, res) => {
 
 
 
-// Withdrawal endpoint for customers
+
 app.post('/withdraw', authenticateToken, async (req, res) => {
   const { amount } = req.body;
 
@@ -194,7 +193,6 @@ app.post('/withdraw', authenticateToken, async (req, res) => {
 
 
 
-// Start the server
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
